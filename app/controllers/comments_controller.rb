@@ -1,30 +1,38 @@
 class CommentsController < ApplicationController
+  before_action :set_comment, only: [:destroy, :edit, :update]
+
   def index
     @comments = unless params[:q]
-    Comment.all
-    else
-    Comment.where('content like ?', "%#{params[:q]}%")
-    end
+                  Comment.all
+                else
+                  Comment.where('content like ?', "%#{params[:q]}%")
+                end
   end
 
   def create
-    @comment = Comment.new(content: params[:comment])
+    @comment = Comment.new(content: comment_params)
     @comment.save
   end
 
   def destroy
-    @comment = Comment.find(params[:id])
     @comment.destroy
   end
 
   def edit
-    @comment = Comment.find(params[:id])
   end
 
   def update
-    @comment = Comment.find(params[:id])
-    @comment.content = params[:content]
+    @comment.content = comment_params
     @comment.save
-  end 
+  end
 
+  private
+
+  def set_comment
+    @comment = Comment.find(params[:id])
+  end
+
+  def comment_params
+    params.require(:comment)
+  end
 end
